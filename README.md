@@ -1,2 +1,2 @@
 # angchat
-A simple chat application using sockets.io and Angular.js
+A simple chat application using socket.io and Angular.js
