@@ -1,0 +1,119 @@
+<div id='header'></div>
+
+<h1>Angularjs Chat Application</h1>
+<h3>
+	<i>
+		fill out the information below to join the conversation
+	</i>
+</h3>
+
+<main>
+	<div class='container'>
+		<div class='row'>
+			<div class='col col-md-2'>
+				Nickname:
+			</div>
+			<div class='col col-md-4'>
+				<input type='text' class='form-control' ng-model='info.nickName' />
+			</div>
+			<div class='col col-md-4' ng-show='showError'>
+				<p style='color: whitesmoke; font-weight: bold; text-shadow: 2px 2px 3px black;'>* Give yourself a nickname</p>
+			</div>
+		</div>
+		<div class='row'>
+			<div class='col col-md-2'>
+				Font:
+			</div>
+			<div class='col col-md-2'>
+				<select class='form-control' ng-model='info.font'>
+					<option value='inherit'>inherit</option>
+					<option value='Times New Roman'>Times New Roman</option>
+					<option value='impact'>impact</option>
+					<option value='Monospace'>Monospace</option>
+					<option value='Courier New'>Courier New</option>"Comic Sans MS", "Comic Sans", cursive;
+					<option value='Comic Sans MS", "Comic Sans", cursive;'>Comic Sans</option>
+				</select>
+			</div>
+			<div class='col col-md-2'>
+				<p id='example' ng-style="{'font-family': info.font, 'outline' : '2px solid' + info.outlineColor, color : info.fontColor, 'background-color': info.backgroundColor}">example</p>
+			</div>
+		</div>
+		<div class='row'>
+			<div class='col col-md-2'>
+				Font Color:
+			</div>
+			<div class='col col-md-4'>
+				<input type='color' class='form-control' ng-model='info.fontColor' />
+			</div>
+		</div>
+		<div class='row'>
+			<div class='col col-md-2'>
+				Background Color:
+			</div>
+			<div class='col col-md-4'>
+				<input type='color' class='form-control' ng-model='info.backgroundColor' />
+			</div>
+		</div>
+		<div class='row'>
+			<div class='col col-md-2'>
+				Outline Color:
+			</div>
+			<div class='col col-md-4'>
+				<input type='color' class='form-control' ng-model='info.outlineColor' />
+			</div>
+		</div>
+		<div class='row'>
+			<div class='col col-md-2'>
+				Image url:
+			</div>
+			<div class='col col-md-4'>
+				<input type='text' class='form-control' ng-model='info.imageUrl' />
+			</div>
+		</div>
+		<div class='row'>
+			<div class='col col-md-2'>
+				Image:
+			</div>
+			<div class='col col-md-4'>
+				<div ng-style="{'background-image' : 'url(' + info.imageUrl + ')'}" style='background-size: cover; width: 15em; height: 10em; outline: 4px dotted white; margin-bottom: 15px;'></div>
+			</div>
+		</div>
+		<div class='row'>
+			<div class='col col-md-4'>
+				<button type='button' class='btn btn-default' ng-click='enter()'>Join Conversation</button>
+			</div>
+			<div class='col col-md-2'>
+				<button type='button' class='btn btn-danger' ng-click='reset()' style='color: black; font-weight: bold;'>Reset Info</button>
+			</div>
+		</div>
+	</div>
+</main>
+
+<style>
+	main{
+		background-color: #73AD21;
+		color: white;
+		font-size: 19px;
+		padding-top: 15px;
+		padding-bottom: 15px;
+	}
+	
+	main .container input, main .container select{
+		color: black;
+		margin-bottom: 15px;
+	}
+	
+	h1, h3{
+		text-align: center;
+	}
+	
+	#header{
+		background-color: #73AD21;
+		height: 15px;
+	}
+	
+	#example{
+		background-color: white;
+		padding: 5px;
+	}
+</style>
