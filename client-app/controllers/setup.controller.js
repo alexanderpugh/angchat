@@ -1,4 +1,4 @@
-export default ['$scope', 'user', '$location', function ($scope, user, $location) {
+export default ['user', '$location', function (user, $location) {
   const vm = this;
 
   function userNameValid () {
@@ -11,7 +11,11 @@ export default ['$scope', 'user', '$location', function ($scope, user, $location
 
   vm.enterChat = function () {
     if (userNameValid()) {
-      $location.url('/online');
+      user.joinChat((err) => {
+        if (!err) {
+          $location.url('/online');
+        }
+      });
     } else {
       vm.showError = true;
     }

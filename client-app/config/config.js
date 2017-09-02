@@ -14,7 +14,8 @@ export default ['$routeProvider', '$locationProvider',
 
     .when('/online', {
       controller: chatController,
-      template: chatView
+      template: chatView,
+      controllerAs: 'vm'
     })
 
     .otherwise({ redirectTo: '/' });

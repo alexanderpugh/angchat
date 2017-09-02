@@ -5,6 +5,10 @@ export default `
 <br />
 <button type='button' class='btn btn-danger' ng-click='leaveConvo()'>leave conversation</button>
 
+VM:
+<pre>
+  {{vm}}
+</pre>
 
 <div class='controller'>
 	<div class='row'>
@@ -12,9 +16,9 @@ export default `
 		<!-- messages start -->
 		<h3>messages</h3>
 		<div id='msg-area'>
-			<div class='msg' ng-repeat='m in messages track by $index' ng-style="{'font-family': m.font, 'color': m.fontColor, 'background-color': m.backgroundColor, 'outline': '1px solid' + m.outlineColor}">
+			<div class='msg' ng-repeat='m in vm.messages track by $index' ng-style="{'font-family': m.font, 'color': m.fontColor, 'background-color': m.backgroundColor, 'outline': '1px solid' + m.outlineColor}">
 				<div ng-style="{'background-image': 'url(' + m.imageUrl + ')'}"></div>
-			{{m.nickName}} at {{m.time | date:'h:m:s'}} said: "{{m.comment}}"
+			  {{m.userID}} said at {{m.posted | date:'h:m:s'}} said: "{{m.content}}"
 			</div>
 			<div id='scroll-to'></div>
 		</div>

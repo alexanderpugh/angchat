@@ -1,145 +1,174 @@
-export default ['$scope', '$location', 'io', 'user', '$http', '$window',
-  function ($scope, $location, io, user, $http, $window) {
+import {
+  USER_JOINED_CHAT,
+  USER_LEFT_CHAT,
+  USER_STOPPED_TYPING,
+  USER_TYPING,
+  NEW_MESSAGE_ADDED,
+  MESSAGES_LOADED
+} from '../config/ioActions';
 
-  $scope.sendEnter = function (c) {
-    if (c == 13) {
-      $scope.send();
-    }
+function generateChatObject () {
+  return {
+    members: [],
+    usersTyping: [],
+    message: []
   };
+}
 
-  function scrollDown () {
-    (function () {
-      try {
-        $('#msg-area').animate(
-          { scrollTop: $('.msg').last().offset().top + ($('.msg').length * 100) }
-        );
-      } catch (e) {
+export default ['$location', 'io', 'user', '$window',
+  function ($location, io, user, $window) {
 
-      }
-    })();
-  }
+    const vm = this;
 
-  $window.onbeforeunload = () => {
-    leave();
-  };
+    io.on(USER_TYPING, (data) => {
+      vm.usersTyping = data;
+    });
 
-  function leave () {
-    io.emit('user leaves', $scope.info.id);
-  }
+    io.on(USER_STOPPED_TYPING, (data) => {
+      vm.usersTyping = data;
+    });
 
-  $scope.leaveConvo = function () {
-    if (confirm('ok to leave conversation?')) {
+    io.on(NEW_MESSAGE_ADDED, (messages) => {
+      console.log('messages: ', messages);//DEBUG
+      vm.messages = messages;
+      //scrollDown();
+    });
+
+    io.on(USER_JOINED_CHAT, (data) => {
+      vm.joinedUsers = data;
+      console.log('data: ', data);//DEBUG
+    });
+
+    io.on(USER_LEFT_CHAT, (data) => {
+      vm.leftUsers.push(data[1]);
+      vm.joinedUsers = data[0];
+    });
+
+    io.on(MESSAGES_LOADED, (data) => {
+      vm.messages = data;
+    });
+
+    $window.onbeforeunload = () => {
       leave();
-      $location.url('/');
-    }
-  };
-
-  function stopTyping () {
-    io.emit('user stoped typing', $scope.info.id);
-    $scope.selfTyping = false;
-    $scope.typingMsgSent = false;
-  }
-
-  $scope.notifyTyping = function () {
-    if ($scope.comment.length >= 1) {
-      $scope.selfTyping = true;
-
-    } else if ($scope.selfTyping == 0) {
-      $scope.selfTyping = false;
-    }
-
-    if ($scope.selfTyping == true && !$scope.typingMsgSent) {
-      io.emit('user typing', { nickName: $scope.info.nickName, id: $scope.info.id });
-      $scope.typingMsgSent = true;
-
-    } else if ($scope.selfTyping == false) {
-      stopTyping();
-      $scope.typingMsgSent = false;
-    }
-  };
-
-  $scope.send = () => {
-    const toSend = {
-      nickName: $scope.info.nickName,
-      comment: $scope.comment,
-      fontColor: $scope.info.fontColor,
-      time: new Date(),
-      borderColor: $scope.info.borderColor,
-      backgroundColor: $scope.info.backgroundColor,
-      imageUrl: $scope.info.imageUrl,
-      font: $scope.info.font
     };
-    io.emit('chat message', toSend);
-    stopTyping();
-    $scope.comment = "";
-  };
 
-  io.on('user typing', (data) => {
-    $scope.usersTyping = data;
-  });
+    vm.sendEnter = function (c) {
+      if (c === 13) {
+        vm.send();
+      }
+    };
 
-  io.on('user stoped typing', (data) => {
-    $scope.usersTyping = data;
-  });
+    vm.leaveConvo = function () {
+      if (confirm('ok to leave conversation?')) {
+        leave();
+        $location.url('/');
+      }
+    };
 
-  io.on('chat message', (data) => {
-    $scope.messages = data;
-    scrollDown();
-  });
+    vm.notifyTyping = function () {
+      if (vm.comment.length >= 1) {
+        vm.selfTyping = true;
 
-  io.on('user joined', (data) => {
-    $scope.joinedUsers = data;
-  });
+      } else if (vm.selfTyping == 0) {
+        vm.selfTyping = false;
+      }
 
-  io.on('user leaves', (data) => {
-    $scope.leftUsers.push(data[1]);
-    $scope.joinedUsers = data[0];
-  });
+      if (vm.selfTyping == true && !vm.typingMsgSent) {
+        io.emit(USER_TYPING, { nickName: vm.info.nickName, id: vm.info.id });
+        vm.typingMsgSent = true;
 
-  io.on('get messages', (data) => {
-    $scope.messages = data;
-  });
+      } else if (vm.selfTyping == false) {
+        stopTyping();
+        vm.typingMsgSent = false;
+      }
+    };
 
-  function custSetUp () {
-    $scope.showActivity = true;
-    $scope.showOnline = true;
-  }
+    vm.send = () => {
+      const toSend = {
+        nickName: vm.info.nickName,
+        comment: vm.comment,
+        fontColor: vm.info.fontColor,
+        time: new Date(),
+        borderColor: vm.info.borderColor,
+        backgroundColor: vm.info.backgroundColor,
+        imageUrl: vm.info.imageUrl,
+        font: vm.info.font
+      };
+      io.emit(NEW_MESSAGE_ADDED, toSend);
+      stopTyping();
+      vm.comment = "";
+    };
 
-  $scope.toggCustShow = (toTog) => {
-    switch (toTog) {
-      case 'activity':
-        $scope.showActivity = ($scope.showActivity == true) ? false : true;
-        break;
-      case 'online':
-        $scope.showOnline = ($scope.showOnline == true) ? false : true;
-        break;
+    vm.toggCustShow = (toTog) => {
+      switch (toTog) {
+        case 'activity':
+          vm.showActivity = (vm.showActivity == true) ? false : true;
+          break;
+        case 'online':
+          vm.showOnline = (vm.showOnline == true) ? false : true;
+          break;
+      }
+    };
+
+    function leave() {
+      io.emit(USER_LEFT_CHAT, vm.info.id);
     }
-  };
 
-  function init () {
-    $scope.comment = "";
-    io.emit('get messages');
-    $scope.joinedUsers = [];
-    $scope.leftUsers = [];
-    $scope.usersTyping = [];
+    function stopTyping() {
+      io.emit(USER_STOPPED_TYPING, vm.info.id);
+      vm.selfTyping = false;
+      vm.typingMsgSent = false;
+    }
 
-    $scope.selfTyping = false;
-    $scope.typingMsgSent = false;
+    function scrollDown() { /**/
+      (function () {
+        try {
+          $('#msg-area').animate(
+            { scrollTop: $('.msg').last().offset().top + ($('.msg').length * 100) }
+          );
+        } catch (e) {
 
-    $scope.info = user.getInfo();
+        }
+      })();
+    }
 
-    $http
-      .get('/gen-id')
-      .then((data) => {
-        console.log(data);//DEBUG
-        $scope.info.id = data.data;
-        $scope.info.joined = new Date;
+    function custSetUp() {
+      vm.showActivity = true;
+      vm.showOnline = true;
+    }
 
-        io.emit('user joined', $scope.info);
+    function init() {
+      vm.user = user;
+      console.log('user: ', user);//DEBUG
+      user.refresh((err) => {
+        if (!err) {
+          console.log('user: ', user);//DEBUG
+          io.emit(NEW_MESSAGE_ADDED, {
+            message: {
+              content: 'a new message',
+              userID: user.info.id
+            }
+          });//DEBUG
+        }
       });
 
-    custSetUp();
-  }
+      /*
+      vm.comment = "";
+      io.emit(MESSAGES_LOADED);
+      vm.joinedUsers = [];
+      vm.leftUsers = [];
+      vm.usersTyping = [];
 
-  init();
-}];
+      vm.selfTyping = false;
+      vm.typingMsgSent = false;
+
+      vm.info = user.getInfo();
+
+      io.emit(USER_JOINED_CHAT, vm.info);
+
+      custSetUp();
+      */
+    }
+
+    init();
+  }];

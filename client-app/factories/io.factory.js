@@ -1,20 +1,21 @@
 export default ['$rootScope', function ($rootScope) {
-  const socket = window.io.connect('http://localhost:3000');
+  const socket = window.io.connect();
 
   return {
-    on (eventName, callback) {
-      socket.on(eventName, () => {
+    on: function (eventName, callback) {
+      socket.on(eventName, function () {
         const args = arguments;
-        $rootScope.$apply(() => {
+        console.log('args: ', args);//DEBUG
+        $rootScope.$apply(function () {
           callback.apply(socket, args);
         });
       });
     },
 
-    emit (eventName, data, callback) {
-      socket.emit(eventName, data, () => {
-        var args = arguments;
-        $rootScope.$apply(() => {
+    emit: function (eventName, data, callback) {
+      socket.emit(eventName, data, function () {
+        const args = arguments;
+        $rootScope.$apply(function () {
           if (callback) {
             callback.apply(socket, args);
           }

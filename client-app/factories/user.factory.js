@@ -1,6 +1,6 @@
 import avatars from '../config/avatars';
 
-export default [function () {
+export default ['$http', function ($http) {
   const user = {};
 
   user.initialized = false;
@@ -17,12 +17,50 @@ export default [function () {
       backgroundColor: '#ffffff',
       outlineColor: '#000000',
       avatar: avatars[Math.floor(Math.random() * avatars.length)],
+      online: false,
       id: null
     };
   }
 
-  // TODO join chat front and back
-  user.joinChat = (callback) => {};
+  user.refresh = (callback) => {
+    console.log(user.info.id);//DEBUG
+    if (user.info.id === true) {
+      callback(null);
+    } else {
+      $http
+        .get('/client-refresh')
+        .then((response) => {
+          console.log(response);//DEBUG
+          user.info = response.data.data;
+          callback(null);
+        })
+        .catch((reponse) => {
+          console.error(`ERROR: unable to refresh the user because ${response}`);
+          callback(true);
+        });
+    }
+  };
+
+  user.joinChat = (callback) => {
+    $http
+      .post('/users/', {
+        user: user.info
+      })
+      .then((response) => {
+        console.log(response.data.success);//DEBUG
+        if (response.data.success) {
+          user.info = response.data.data;
+          callback(null);
+        } else {
+          console.error('ERROR: uable to join the chat');
+          callback(true);
+        }
+      })
+      .catch((response) => {
+        console.error(`ERROR: unable to join the chat because of: ${response.data.message}`);
+        callback(true);
+      });
+  };
 
   if (!user.initialized) {
     user.clear();
