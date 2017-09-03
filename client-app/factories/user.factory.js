@@ -23,14 +23,12 @@ export default ['$http', function ($http) {
   }
 
   user.refresh = (callback) => {
-    console.log(user.info.id);//DEBUG
     if (user.info.id === true) {
       callback(null);
     } else {
       $http
         .get('/client-refresh')
         .then((response) => {
-          console.log(response);//DEBUG
           user.info = response.data.data;
           callback(null);
         })
@@ -47,7 +45,6 @@ export default ['$http', function ($http) {
         user: user.info
       })
       .then((response) => {
-        console.log(response.data.success);//DEBUG
         if (response.data.success) {
           user.info = response.data.data;
           callback(null);

@@ -4,12 +4,8 @@ const controller = require('./controller');
 
 const router = express.Router();
 
-router.get('/', (req, res, next) => {
-  next();
-});
-
-router.post('/', (req, res, next) => {
-  next();
+router.get('/', (req, res) => {
+  controller.indexAction({ req, res });
 });
 
 module.exports = {

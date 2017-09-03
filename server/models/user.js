@@ -50,7 +50,6 @@ module.exports.add = async (user) => {
       outlineColor: user.outlineColor,
       avatar: user.avatar
     });
-    console.log('newly created user: ', newUser);//DEBUG
     return newUser;
   } catch (error) {
     throw error;
@@ -68,6 +67,8 @@ module.exports.find = async (id = null) => {
   }
 };
 
+module.exports.User = User;
+
 User.sync({
-  force: false
+  force: true
 });

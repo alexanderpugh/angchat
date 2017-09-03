@@ -9,7 +9,7 @@ router.get('/', (req, res, next) => {
 });
 
 router.get('/online', (req, res, next) => {
-  if (req.session.userID) {
+  if (req.session.userId) {
     next();
   } else {
     res.redirect('/');

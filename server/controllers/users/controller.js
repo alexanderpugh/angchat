@@ -29,7 +29,7 @@ module.exports = {
         response.data = newUser;
         response.success = true;
 
-        req.session.userID = newUser.id;
+        req.session.userId = newUser.id;
       } catch (error) {
         response.message = `ERROR: unnable to register the user because ${error}`;
       } finally {

@@ -5,7 +5,6 @@ export default ['$rootScope', function ($rootScope) {
     on: function (eventName, callback) {
       socket.on(eventName, function () {
         const args = arguments;
-        console.log('args: ', args);//DEBUG
         $rootScope.$apply(function () {
           callback.apply(socket, args);
         });

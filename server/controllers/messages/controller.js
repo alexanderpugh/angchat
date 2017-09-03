@@ -38,16 +38,13 @@ module.exports = {
 
   socketActions ({ io, client}) {
     client.on('NEW_MESSAGE_ADDED', (request) => {
-      console.log('message:', request);//DEBUG
       (async () => {
         try {
           const message = request.message;
           const newMessage = await messageModel.add(message);
           const messages = await messageModel.find();
 
-          console.log(messages);//DEBUG
-
-          client.emit('NEW_MESSAGE_ADDED', messages);
+          io.emit('NEW_MESSAGE_ADDED', messages);
         } catch (error) {
           console.error(`ERROR: ${error}`);
         }

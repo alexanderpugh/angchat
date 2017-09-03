@@ -1,20 +1,21 @@
 const Sequelize = require('Sequelize');
 
 const connection = require('../config/connection');
+const user = require('./user');
 
 const Message = connection.define('message', {
-  userID: Sequelize.INTEGER,
+  userId: Sequelize.INTEGER,
   content: Sequelize.STRING,
-  posted: Sequelize.STRING,
+  posted: Sequelize.DATE,
   id: { type: Sequelize.INTEGER, autoIncrement: true, primaryKey: true }
 });
 
 const isValid = (message) => {
-  if (!message.userID) {
+  if (!message.content) {
     return false;
   }
 
-  if (!message.content) {
+  if (!message.userId) {
     return false;
   }
 
@@ -23,18 +24,15 @@ const isValid = (message) => {
 
 module.exports.add = async (message) => {
   try {
-
     if (!isValid(message)) {
       throw new Error('ERROR: the message is not valid');
     }
-
     const newMessage = await Message.create({
-      userID: message.userID,
+      userId: message.userId,
       content: message.content,
       posted: new Date().toString()
     });
 
-    console.log('newly created message: ', newMessage);//DEBUG
     return newMessage;
   } catch (error) {
     throw error;
@@ -44,7 +42,21 @@ module.exports.add = async (message) => {
 module.exports.find = async (id = null) => {
   try {
     const method = id === null ? 'findAll' : 'findById';
-    const result = await Message[method](id === null ? {} : id);
+    let result;
+
+    if (method === 'findAll') {
+      result = await Message.findAll({
+        include: {
+          model: user.User
+        }
+      });
+
+    } else if (method === 'findById') {
+      result = await Message.findById(id);
+      result.user = await user.find(result.userId);
+    } else {
+      throw new Error('ERROR: invalid method supplied to message.find');
+    }
 
     return result;
   } catch (error) {
@@ -52,6 +64,8 @@ module.exports.find = async (id = null) => {
   }
 };
 
+Message.belongsTo(user.User);
+
 Message.sync({
-  force: false
+  force: true
 });
