@@ -3,7 +3,7 @@ const jsonResponse = require('../../utils/jsonResponse');
 
 module.exports = {
   clientRefresh ({ req, res, next }) {
-    const response = jsonResponse({});
+    const response = jsonResponse();
     (async () => {
       try {
         const updatedUser = await userModel.find(req.session.userId);

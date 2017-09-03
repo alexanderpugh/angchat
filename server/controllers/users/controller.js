@@ -4,7 +4,7 @@ const jsonResponse = require('../../utils/jsonResponse');
 module.exports = {
 
   indexAction ({ req, res, next }) {
-    const response = jsonResponse({});
+    const response = jsonResponse();
     (async () => {
       try {
         const users = await userModel.find();
@@ -20,7 +20,7 @@ module.exports = {
   },
 
   addUser ({ req, res, next }) {
-    const response = jsonResponse({});
+    const response = jsonResponse();
     (async () => {
       try {
         const user = req.body.user;

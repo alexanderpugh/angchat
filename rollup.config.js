@@ -1,6 +1,7 @@
 import resolve from 'rollup-plugin-node-resolve';
 import commonJS from 'rollup-plugin-commonjs';
-//import babel from 'rollup-plugin-babel';
+import babel from 'rollup-plugin-babel';
+import uglify from 'rollup-plugin-uglify';
 
 export default {
   input: 'client-app/index.js',
@@ -10,6 +11,10 @@ export default {
   },
   plugins: [
     resolve(),
-    commonJS()
+    commonJS(),
+    babel({
+      exclude: 'node_modules/**'
+    }),
+    uglify()
   ]
 };
