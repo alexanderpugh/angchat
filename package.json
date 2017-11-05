@@ -1,7 +1,7 @@
 {
-  "name": "angchat",
+  "name": "simple-chat",
   "version": "1.0.0",
-  "description": "a chat app using angular and socket",
+  "description": "a chat app using angular and socket.io",
   "main": "app.js",
   "scripts": {
     "dev:server": "nodemon --inspect server/app",
@@ -19,7 +19,7 @@
     "sequelize": "^4.7.5",
     "socket.io": "^2.0.3",
     "socket.io-client": "^2.0.3",
-    "sqlite3": "^3.1.9"
+    "sqlite3": "^3.1.13"
   },
   "devDependencies": {
     "babel-core": "^6.26.0",
